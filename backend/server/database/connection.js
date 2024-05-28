@@ -1,12 +1,17 @@
 const mongoose = require('mongoose');
-const databaseUrl = process.env.DATABASE_URL || 'mongodb://localhost/argentBankDB';
 
-module.exports = async () => {
+const connectDB = async () => {
   try {
-    await mongoose.connect(databaseUrl, { useNewUrlParser: true, useUnifiedTopology: true });
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/argentBankDB', {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useFindAndModify: false, // This line avoids the deprecation warning
+    });
     console.log('Database successfully connected');
-  } catch (error) {
-    console.error(`Database Connectivity Error: ${error}`);
-    throw new Error(error);
+  } catch (err) {
+    console.error('Database connection error:', err);
+    process.exit(1); // Exit process with failure
   }
 };
+
+module.exports = connectDB;
